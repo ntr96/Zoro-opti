@@ -1,0 +1,13 @@
+project_id = "0ec90b57d6e95fcbda19832f"
+
+[functions.ai-assistant]
+verify_jwt = true
+
+[functions.send-activation-email]
+verify_jwt = true
+
+[functions.activate-account]
+verify_jwt = true
+
+[functions.stripe-checkout]
+verify_jwt = true
