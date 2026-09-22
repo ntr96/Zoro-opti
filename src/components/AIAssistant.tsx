@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { Sparkles, Send, Bot, User, Brain } from "lucide-react";
-import { supabase } from "@/lib/supabase";
 import type { ChatMessage } from "@/types";
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 export function AIAssistant() {
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -32,17 +34,13 @@ export function AIAssistant() {
     setMessages([...newMessages, assistantMsg]);
 
     try {
-      const session = await supabase.auth.getSession();
-      const token = session.data.session?.access_token;
-      if (!token) throw new Error("Non connecté");
-
       const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-assistant`,
+        `${SUPABASE_URL}/functions/v1/ai-assistant`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
           },
           body: JSON.stringify({
             messages: newMessages.map((m) => ({ role: m.role, content: m.content })),

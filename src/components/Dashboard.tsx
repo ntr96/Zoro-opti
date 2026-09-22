@@ -1,14 +1,12 @@
 import { useState } from "react";
-import { Cpu, LogOut, Gauge as GaugeIcon, Zap, Sparkles } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { Cpu, Home, Gauge as GaugeIcon, Zap, Sparkles } from "lucide-react";
 import { SystemAnalysis } from "@/components/SystemAnalysis";
 import { OptimizationPanel } from "@/components/OptimizationPanel";
 import { AIAssistant } from "@/components/AIAssistant";
 
 type Tab = "analysis" | "optimization" | "assistant";
 
-export function Dashboard() {
-  const { user, signOut } = useAuth();
+export function Dashboard({ onHome }: { onHome?: () => void }) {
   const [tab, setTab] = useState<Tab>("analysis");
 
   const tabs: { id: Tab; label: string; icon: typeof Cpu }[] = [
@@ -28,16 +26,15 @@ export function Dashboard() {
             </div>
             <span className="font-bold">PC Optimizer</span>
           </div>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-slate-400 hidden sm:block">{user?.email}</span>
+          {onHome && (
             <button
-              onClick={signOut}
+              onClick={onHome}
               className="bg-slate-800 hover:bg-slate-700 p-2 rounded-lg transition-colors"
-              title="Déconnexion"
+              title="Accueil"
             >
-              <LogOut className="w-4 h-4" />
+              <Home className="w-4 h-4" />
             </button>
-          </div>
+          )}
         </div>
       </header>
 

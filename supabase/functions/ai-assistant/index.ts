@@ -1,17 +1,11 @@
-import { createClient } from "npm:@supabase/supabase-js@2.57.4";
-
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const openaiKey = Deno.env.get("OPENAI_API_KEY");
 const anthropicKey = Deno.env.get("ANTHROPIC_API_KEY");
-
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 interface ChatMessage {
   role: "user" | "assistant" | "system";
@@ -24,26 +18,6 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Missing auth header" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const token = authHeader.replace("Bearer ", "");
-    const authClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, {
-      global: { headers: { Authorization: `Bearer ${token}` } },
-    });
-    const { data: { user } } = await authClient.auth.getUser();
-    if (!user) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
     const { messages, provider } = await req.json() as { messages: ChatMessage[]; provider: "openai" | "claude" };
     const systemPrompt: ChatMessage = {
       role: "system",
